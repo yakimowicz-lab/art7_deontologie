@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cas pratique – Code de déontologie immobilier</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #f5f4f0;
+  color: #1a1a18;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+.wrap { max-width: 680px; margin: 0 auto; }
+h1 {
+  font-size: 20px;
+  font-weight: 500;
+  color: #01438F;
+  margin-bottom: 0.25rem;
+}
+.subtitle {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+.progress-row { display: flex; gap: 8px; margin-bottom: 1.5rem; }
+.progress-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #d0cec8;
+  transition: background 0.2s;
+}
+.progress-dot.done { background: #52AE32; }
+.progress-dot.active { background: #01438F; }
+.scenario-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e0ddd6;
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+.scenario-badge {
+  display: inline-block;
+  background: #EAF3DE;
+  color: #27500A;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-bottom: 1rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.avatar-row { display: flex; gap: 12px; align-items: center; margin-bottom: 1rem; }
+.avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600;
+  flex-shrink: 0;
+}
+.avatar.agent { background: #EAF3DE; color: #27500A; }
+.avatar.client { background: #E6F1FB; color: #0C447C; }
+.avatar.syndicat { background: #EEEDFE; color: #3C3489; }
+.avatar.marchand { background: #FAEEDA; color: #633806; }
+.avatar-name { font-size: 14px; font-weight: 600; color: #1a1a18; }
+.avatar-desc { font-size: 12px; color: #888; }
+.scene-text { font-size: 15px; line-height: 1.7; color: #2c2c2a; }
+.question-section { margin-bottom: 1.25rem; }
+.question-label {
+  font-size: 11px; font-weight: 600; color: #888;
+  text-transform: uppercase; letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+}
+.question-text {
+  font-size: 15px; font-weight: 600; color: #1a1a18;
+  line-height: 1.6; margin-bottom: 1rem;
+}
+.choices { display: flex; flex-direction: column; gap: 8px; }
+.choice-btn {
+  background: #fff;
+  border: 1px solid #d0cec8;
+  border-radius: 8px;
+  padding: 0.85rem 1rem;
+  font-size: 14px;
+  color: #1a1a18;
+  text-align: left;
+  cursor: pointer;
+  line-height: 1.55;
+  transition: background 0.12s, border-color 0.12s;
+}
+.choice-btn:hover { background: #f5f4f0; border-color: #a0a099; }
+.choice-btn.correct { background: #EAF3DE; border-color: #52AE32; color: #173404; }
+.choice-btn.wrong { background: #FCEBEB; border-color: #E24B4A; color: #501313; }
+.choice-btn:disabled { pointer-events: none; opacity: 0.5; }
+.feedback {
+  display: none;
+  border-left: 3px solid #52AE32;
+  background: #f5f4f0;
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.1rem;
+  margin-top: 1rem;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #2c2c2a;
+}
+.feedback.show { display: block; }
+.feedback.wrong-fb { border-left-color: #E24B4A; }
+.feedback strong { font-weight: 600; }
+.ref {
+  font-size: 12px; color: #888;
+  margin-top: 0.5rem; font-style: italic;
+}
+.nav-row {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-top: 1.25rem;
+}
+.q-counter { font-size: 13px; color: #888; }
+.next-btn {
+  display: none;
+  background: #01438F;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.6rem 1.25rem;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.next-btn.show { display: block; }
+.next-btn:hover { background: #143466; }
+.score-card {
+  display: none;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e0ddd6;
+  padding: 2.5rem 2rem;
+  text-align: center;
+}
+.score-card.show { display: block; }
+.score-big { font-size: 56px; font-weight: 700; color: #01438F; margin: 0.5rem 0; }
+.score-sub { font-size: 15px; color: #555; margin-bottom: 1.75rem; line-height: 1.6; }
+.restart-btn {
+  background: #fff;
+  border: 1px solid #d0cec8;
+  border-radius: 8px;
+  padding: 0.65rem 1.5rem;
+  font-size: 14px;
+  color: #1a1a18;
+  cursor: pointer;
+  font-weight: 500;
+}
+.restart-btn:hover { background: #f5f4f0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Code de déontologie — Article 7 : la confidentialité</h1>
+  <p class="subtitle">3 scénarios pour identifier les manquements à l'obligation de confidentialité et connaître ses exceptions</p>
+
+  <div class="progress-row" id="progress-row"></div>
+
+  <div id="quiz-area">
+    <div class="scenario-card" id="scene-card"></div>
+    <div class="scenario-card" id="question-card">
+      <div class="question-section">
+        <div class="question-label">À vous de jouer</div>
+        <div class="question-text" id="q-text"></div>
+        <div class="choices" id="choices"></div>
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <div class="nav-row">
+        <span class="q-counter" id="q-counter"></span>
+        <button class="next-btn" id="next-btn">Scénario suivant →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="score-card" id="score-card">
+    <div class="question-label">Votre résultat</div>
+    <div class="score-big" id="score-val">0/4</div>
+    <div class="score-sub" id="score-msg"></div>
+    <button class="restart-btn" onclick="restart()">↺ Recommencer</button>
+  </div>
+</div>
+
+<script>
+const scenarios = [
+  {
+    badge: "Scénario 1 — Discrétion sur les informations du mandant",
+    avatarClass: "agent",
+    avatarInitials: "IS",
+    avatarName: "Inès Salomon",
+    avatarDesc: "Négociatrice, transactions résidentielles",
+    scene: "Inès gère la vente d'un appartement pour un vendeur en instance de séparation. Lors de la prise de mandat, le vendeur lui a précisé qu'il ne souhaitait pas que sa situation personnelle soit évoquée. En visite avec un acquéreur très intéressé, celui-ci demande pourquoi le bien est mis en vente si rapidement. Inès lui explique spontanément la séparation du vendeur, pensant que ça rassurera l'acquéreur sur la motivation à vendre.",
+    question: "Inès a-t-elle respecté ses obligations au titre de l'article 7 du code de déontologie ?",
+    choices: [
+      { text: "Non, le vendeur avait expressément demandé la discrétion sur sa situation personnelle — Inès ne pouvait pas la divulguer, même pour faciliter la vente.", correct: true },
+      { text: "Oui, informer l'acquéreur de la motivation du vendeur fait partie du service et facilite la transaction.", correct: false },
+      { text: "Non, mais seulement si l'acquéreur utilise ensuite cette information pour négocier le prix.", correct: false },
+      { text: "Oui, une séparation n'est pas une information suffisamment sensible pour être couverte par la confidentialité.", correct: false }
+    ],
+    feedbackOk: "Exact. Le vendeur avait clairement demandé que sa situation personnelle ne soit pas communiquée. L'article 7 impose de respecter cette demande : les informations recueillies dans le cadre du mandat, et a fortiori celles dont le client a expressément demandé la confidentialité, ne peuvent être divulguées sans son autorisation.",
+    feedbackKo: "L'intention commerciale ne prime pas sur la volonté du client. Le vendeur avait expressément demandé la discrétion sur sa situation personnelle. L'article 7 impose de respecter cette demande — Inès n'avait pas à évoquer la séparation, même pour rassurer l'acquéreur sur la motivation à vendre."
+  },
+  {
+    badge: "Scénario 2 — Confidentialité et collaborateurs",
+    avatarClass: "marchand",
+    avatarInitials: "RB",
+    avatarName: "Romain Balland",
+    avatarDesc: "Dirigeant d'agence, équipe de 4 négociateurs",
+    scene: "Romain dirige une agence de 4 négociateurs. Il ne leur a jamais donné de consignes précises sur la confidentialité des dossiers clients. Un de ses négociateurs évoque librement les détails financiers d'un vendeur lors d'un déjeuner d'équipe en terrasse, dans un lieu public, en présence d'autres personnes. Romain estime que « ce sont des discussions internes, ça reste entre nous ».",
+    question: "Romain manque-t-il à ses obligations au titre de l'article 7 ?",
+    choices: [
+      { text: "Non, les échanges entre collègues sont des discussions internes et ne constituent pas une divulgation.", correct: false },
+      { text: "Oui, mais seulement si des informations financières précises ont été mentionnées.", correct: false },
+      { text: "Non, c'est le négociateur qui a parlé — Romain n'est pas responsable du comportement de son collaborateur.", correct: false },
+      { text: "Oui, le dirigeant doit veiller à ce que ses collaborateurs respectent les mêmes règles de confidentialité — y compris en dehors de l'agence.", correct: true }
+    ],
+    feedbackOk: "Bien joué. L'article 7 précise que le professionnel doit veiller à ce que ses collaborateurs et directeurs d'établissement respectent les mêmes règles de confidentialité. La responsabilité de Romain est engagée : il aurait dû sensibiliser son équipe, et les discussions en lieu public sur des dossiers clients constituent une violation de cette obligation.",
+    feedbackKo: "La responsabilité du dirigeant ne s'arrête pas aux actes qu'il commet lui-même. L'article 7 lui impose de veiller activement au respect de la confidentialité par ses collaborateurs — en toutes circonstances, y compris lors d'échanges informels en dehors de l'agence. Romain aurait dû encadrer ses équipes sur ce point."
+  },
+  {
+    badge: "Scénario 3 — Exception à la confidentialité",
+    avatarClass: "syndicat",
+    avatarInitials: "CF",
+    avatarName: "Camille Ferreira",
+    avatarDesc: "Agent immobilier, gestion locative et transactions",
+    scene: "Camille fait l'objet d'une procédure disciplinaire initiée par un ancien client qui l'accuse d'avoir commis une faute dans la gestion de son bien. Pour assurer sa défense, Camille souhaite produire des échanges de mails et des documents issus du dossier du client. Elle hésite car elle pense que la confidentialité lui interdit d'utiliser ces informations.",
+    question: "Camille peut-elle utiliser ces informations pour assurer sa défense ?",
+    choices: [
+      { text: "Non, elle devrait uniquement se défendre avec ses propres notes internes.", correct: false },
+      { text: "Oui, l'article 7 prévoit une exception : un professionnel peut utiliser les informations nécessaires pour assurer sa propre défense dans le cadre d'une procédure judiciaire ou disciplinaire.", correct: true },
+      { text: "Oui, mais uniquement si le client lui a donné son accord au préalable.", correct: false },
+      { text: "Non, la confidentialité est absolue — elle ne peut jamais divulguer des informations issues d'un mandat.", correct: false }
+    ],
+    feedbackOk: "Parfait. L'obligation de confidentialité n'est pas absolue. L'article 7 prévoit explicitement que le professionnel est autorisé à utiliser les informations nécessaires pour assurer sa défense dans le cadre d'une procédure judiciaire ou disciplinaire. Camille peut donc produire ces documents — dans la stricte limite de ce qui est utile à sa défense.",
+    feedbackKo: "La confidentialité connaît des exceptions prévues par la loi. L'article 7 en liste trois : obligation légale ou réglementaire, autorisation expresse du client, et nécessité pour la défense du professionnel dans une procédure judiciaire ou disciplinaire. Camille se trouve dans ce troisième cas — elle peut utiliser ces documents."
+  }
+];
+
+
+let current = 0, score = 0, answered = false;
+
+function buildProgress() {
+  const row = document.getElementById('progress-row');
+  row.innerHTML = '';
+  scenarios.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'progress-dot' + (i < current ? ' done' : i === current ? ' active' : '');
+    row.appendChild(d);
+  });
+}
+
+function renderScene() {
+  const s = scenarios[current];
+  document.getElementById('scene-card').innerHTML = `
+    <span class="scenario-badge">${s.badge}</span>
+    <div class="avatar-row">
+      <div class="avatar ${s.avatarClass}">${s.avatarInitials}</div>
+      <div>
+        <div class="avatar-name">${s.avatarName}</div>
+        <div class="avatar-desc">${s.avatarDesc}</div>
+      </div>
+    </div>
+    <p class="scene-text">${s.scene}</p>
+  `;
+  document.getElementById('q-text').textContent = s.question;
+  document.getElementById('q-counter').textContent = `Question ${current + 1} / ${scenarios.length}`;
+
+  const choicesEl = document.getElementById('choices');
+  choicesEl.innerHTML = '';
+  s.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = c.text;
+    btn.onclick = () => answer(i);
+    choicesEl.appendChild(btn);
+  });
+
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').innerHTML = '';
+  document.getElementById('next-btn').className = 'next-btn';
+  answered = false;
+  buildProgress();
+  updateNextBtn();
+}
+
+function answer(idx) {
+  if (answered) return;
+  answered = true;
+  const s = scenarios[current];
+  const btns = document.querySelectorAll('.choice-btn');
+  const isCorrect = s.choices[idx].correct;
+  if (isCorrect) score++;
+
+  btns.forEach((btn, i) => {
+    if (s.choices[i].correct) btn.classList.add('correct');
+    else btn.disabled = true;
+  });
+  if (!isCorrect) btns[idx].classList.add('wrong');
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show' + (isCorrect ? '' : ' wrong-fb');
+  fb.innerHTML = (isCorrect
+    ? '<strong>✓ Bonne réponse.</strong> '
+    : '<strong>✗ Pas cette fois.</strong> ')
+    + (isCorrect ? s.feedbackOk : s.feedbackKo)
+    + `<div class="ref">Référence : Code de déontologie des professions immobilières — article 7 (confidentialité : informations mandants, responsabilité des collaborateurs, exceptions légales)</div>`;
+
+  document.getElementById('next-btn').className = 'next-btn show';
+}
+
+document.getElementById('next-btn').onclick = () => {
+  current++;
+  if (current < scenarios.length) {
+    renderScene();
+  } else {
+    showScore();
+  }
+};
+
+function updateNextBtn() {
+  const btn = document.getElementById('next-btn');
+  btn.textContent = current === scenarios.length - 1 ? 'Voir mes résultats →' : 'Scénario suivant →';
+}
+
+function showScore() {
+  document.getElementById('quiz-area').style.display = 'none';
+  document.getElementById('progress-row').style.display = 'none';
+  const sc = document.getElementById('score-card');
+  sc.className = 'score-card show';
+  document.getElementById('score-val').textContent = score + ' / ' + scenarios.length;
+  const msgs = [
+    "Reprenez les obligations de l'article 7 : confidentialité des informations, responsabilité sur les collaborateurs, et ses trois exceptions légales.",
+    "Une notion à retravailler. Relisez le scénario que vous avez manqué.",
+    "Bien ! Deux situations bien maîtrisées sur trois.",
+    "Excellent ! Vous maîtrisez parfaitement les obligations de confidentialité de l'article 7."
+  ];
+  document.getElementById('score-msg').textContent = msgs[Math.min(score, 3)];
+}
+
+function restart() {
+  current = 0; score = 0; answered = false;
+  document.getElementById('quiz-area').style.display = '';
+  document.getElementById('progress-row').style.display = '';
+  document.getElementById('score-card').className = 'score-card';
+  renderScene();
+}
+
+renderScene();
+</script>
+</body>
+</html>
